@@ -1,35 +1,35 @@
-const textInput = document.getElementById('text-input');
-const colorSelect = document.getElementById('color-select');
-const layoutSelect = document.getElementById('layout-select');
-const generateButton = document.getElementById('generate-button');
-
-generateButton.addEventListener('click', function() {
-  const text = textInput.value;
-  const color = colorSelect.value;
-  const layout = layoutSelect.value;
-  generateImage(text, color, layout);
-});
-
-function generateImage(text, color, layout) {
+function generateImage(text, color, fontSize, layout) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
 
-  context.font = '36px Arial';
+  context.font = fontSize + 'px Arial';
   context.fillStyle = color;
 
-  const x = layout === 'center' ? canvas.width / 2 : layout === 'right' ? canvas.width - 20 : 20;
+  const x = layout === 'center' ? canvas.width / 2 : layout === 'right' ? canvas.width - context.measureText(text).width : 0;
   const y = canvas.height / 2;
 
-  context.textAlign = layout;
-  context.textBaseline = 'middle';
   context.fillText(text, x, y);
 
   const canvasContainer = document.getElementById('canvas-container');
+  canvasContainer.innerHTML = '';
   canvasContainer.appendChild(canvas);
-
-  const downloadLink = document.createElement('a');
-  downloadLink.href = canvas.toDataURL();
-  downloadLink.download = 'text-image.png';
-  downloadLink.innerText = 'Download Image';
-  canvasContainer.appendChild(downloadLink);
 }
+
+textInput.addEventListener('keyup', function(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    generateButton.click();
+  }
+});
+
+colorPicker.on('color:change', function() {
+  generateButton.click();
+});
+
+fontSizeInput.addEventListener('change', function() {
+  generateButton.click();
+});
+
+layoutSelect.addEventListener('change', function() {
+  generateButton.click();
+});
